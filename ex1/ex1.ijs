@@ -1,6 +1,4 @@
-loc=. 3 : '> (4!:4 <''y'') { 4!:3 $0'
-SCRIPTDIR=: getpath_j_ jpath loc''
-require SCRIPTDIR,'logic.ijs'
+require 'lib.ijs'
 
 ALPHAS=: 0.3 0.1 0.03 0.01
 MAXITER=: 1500
@@ -12,19 +10,18 @@ pd 'ycaption Cost function'
 pd 'key ', (','&joinstring) ": each ALPHAS
 pd y
 pd 'show'
-pd 'save png ',SCRIPTDIR,'gradientDescentCost'
+pd 'save png gradientDescentCost'
 )
 
 NB.run=: 3 : 0
-d=: |: ". every 'b' fread SCRIPTDIR,'ex1data1.txt'
+d=: |: ". every 'b' fread 'ex1data1.txt'
 'tx ty'=: d
-txn=: normalize tx
-txmean=: mean tx
-txstd=: stddev tx
-txn1=: 1,.txn
+tx=: 1,.normalize tx
 
-learningJs=:(txn1 J ty)"2 learningThetas=:1 2 0|: ALPHAS (txn1 gdupdate ty)^:(<MAXITER) (#ALPHAS)#,: 0 0
+learningJs=:(tx J ty)"2 learningThetas=:1 2 0|: ALPHAS (tx gdupdate ty)^:(<MAXITER) (#ALPHAS)#,: 0 0
 
-NB.)
+NB. saveplot learningJs
 
-NB.'dot; ycaption Profit in $10,000s; xcaption Population of City in 10,000s' plot tx;ty
+xy=. {. learningThetas
+z=. {. learningJs
+plot (;/xy),<z
